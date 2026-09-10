@@ -5,19 +5,326 @@
     font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   }
   
+  body {
+    background-color: #f1f5fa;
+    color: #1e293b;
+  }
+
   /* Crisp dairy blue scrollbars */
   ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
   }
   ::-webkit-scrollbar-track {
-    background: #eff6ff;
+    background: #e6effa;
   }
   ::-webkit-scrollbar-thumb {
-    background: #bfdbfe;
+    background: #93c5fd;
     border-radius: 9999px;
   }
   ::-webkit-scrollbar-thumb:hover {
     background: #3b82f6;
+  }
+}
+
+/* =========================================================
+   CLAYMORPHISM DESIGN SYSTEM UTILITIES
+   - Soft 3D inflated surfaces
+   - Dual outer elevation shadows + dual inner highlight/shading
+   - Tactile push states on buttons
+   - Sunken/debossed containers for metrics and inputs
+   ========================================================= */
+
+@utility clay-card {
+  background-color: #ffffff;
+  border-radius: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 
+    10px 14px 24px rgba(175, 195, 225, 0.4),
+    -8px -8px 20px #ffffff,
+    inset 3px 3px 6px rgba(255, 255, 255, 0.95),
+    inset -3px -3px 6px rgba(180, 200, 230, 0.25);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@utility clay-card-hover {
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 
+      12px 18px 30px rgba(160, 185, 220, 0.5),
+      -10px -10px 24px #ffffff,
+      inset 3px 3px 6px rgba(255, 255, 255, 1),
+      inset -3px -3px 6px rgba(160, 185, 220, 0.3);
+  }
+}
+
+@utility clay-card-primary {
+  background: linear-gradient(145deg, #2563eb, #1d4ed8);
+  color: #ffffff;
+  border-radius: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 
+    10px 14px 26px rgba(29, 78, 216, 0.35),
+    -6px -6px 16px rgba(255, 255, 255, 0.2),
+    inset 4px 4px 8px rgba(255, 255, 255, 0.35),
+    inset -4px -4px 8px rgba(15, 23, 42, 0.3);
+}
+
+@utility clay-card-emerald {
+  background: #f0fdf4;
+  border-radius: 1.5rem;
+  border: 1px solid rgba(187, 247, 208, 0.8);
+  box-shadow: 
+    8px 12px 20px rgba(167, 243, 208, 0.4),
+    -6px -6px 16px #ffffff,
+    inset 3px 3px 6px rgba(255, 255, 255, 0.95),
+    inset -3px -3px 6px rgba(110, 231, 183, 0.25);
+}
+
+@utility clay-card-amber {
+  background: #fffbeb;
+  border-radius: 1.5rem;
+  border: 1px solid rgba(254, 240, 138, 0.8);
+  box-shadow: 
+    8px 12px 20px rgba(253, 230, 138, 0.4),
+    -6px -6px 16px #ffffff,
+    inset 3px 3px 6px rgba(255, 255, 255, 0.95),
+    inset -3px -3px 6px rgba(245, 158, 11, 0.15);
+}
+
+@utility clay-card-rose {
+  background: #fff1f2;
+  border-radius: 1.5rem;
+  border: 1px solid rgba(254, 205, 211, 0.8);
+  box-shadow: 
+    8px 12px 20px rgba(254, 205, 211, 0.45),
+    -6px -6px 16px #ffffff,
+    inset 3px 3px 6px rgba(255, 255, 255, 0.95),
+    inset -3px -3px 6px rgba(244, 63, 94, 0.2);
+}
+
+@utility clay-sunken {
+  background-color: #ebf2fb;
+  border-radius: 1rem;
+  border: 1px solid rgba(219, 234, 254, 0.7);
+  box-shadow: 
+    inset 4px 4px 8px rgba(160, 185, 220, 0.4),
+    inset -4px -4px 8px rgba(255, 255, 255, 0.95);
+}
+
+@utility clay-sunken-sm {
+  background-color: #eef4fc;
+  border-radius: 0.75rem;
+  box-shadow: 
+    inset 2px 2px 5px rgba(160, 185, 220, 0.35),
+    inset -2px -2px 5px rgba(255, 255, 255, 0.9);
+}
+
+@utility clay-btn-primary {
+  background: linear-gradient(145deg, #2563eb, #1d4ed8);
+  color: #ffffff;
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 
+    5px 7px 15px rgba(37, 99, 235, 0.35),
+    -4px -4px 10px rgba(255, 255, 255, 0.4),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.45),
+    inset -2px -2px 4px rgba(15, 23, 42, 0.3);
+  transition: all 0.15s ease-in-out;
+  cursor: pointer;
+
+  &:hover {
+    background: linear-gradient(145deg, #1d4ed8, #1e40af);
+    box-shadow: 
+      6px 9px 18px rgba(37, 99, 235, 0.4),
+      -5px -5px 12px rgba(255, 255, 255, 0.45),
+      inset 2px 2px 4px rgba(255, 255, 255, 0.5),
+      inset -2px -2px 4px rgba(15, 23, 42, 0.3);
+  }
+
+  &:active {
+    transform: translateY(2px);
+    box-shadow: 
+      inset 3px 3px 6px rgba(15, 23, 42, 0.4),
+      inset -2px -2px 5px rgba(255, 255, 255, 0.3);
+  }
+}
+
+@utility clay-btn-secondary {
+  background: #ffffff;
+  color: #1e3a8a;
+  border-radius: 1rem;
+  border: 1px solid rgba(219, 234, 254, 0.9);
+  box-shadow: 
+    5px 7px 14px rgba(175, 195, 225, 0.4),
+    -4px -4px 10px #ffffff,
+    inset 2px 2px 4px rgba(255, 255, 255, 0.95),
+    inset -2px -2px 4px rgba(180, 200, 230, 0.25);
+  transition: all 0.15s ease-in-out;
+  cursor: pointer;
+
+  &:hover {
+    background: #f8faff;
+    box-shadow: 
+      6px 8px 16px rgba(160, 185, 220, 0.5),
+      -5px -5px 12px #ffffff,
+      inset 2px 2px 4px rgba(255, 255, 255, 1),
+      inset -2px -2px 4px rgba(160, 185, 220, 0.3);
+  }
+
+  &:active {
+    transform: translateY(2px);
+    box-shadow: 
+      inset 3px 3px 6px rgba(160, 185, 220, 0.5),
+      inset -2px -2px 5px rgba(255, 255, 255, 0.9);
+  }
+}
+
+@utility clay-btn-danger {
+  background: linear-gradient(145deg, #ef4444, #dc2626);
+  color: #ffffff;
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 
+    5px 7px 15px rgba(239, 68, 68, 0.35),
+    -4px -4px 10px rgba(255, 255, 255, 0.3),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.4),
+    inset -2px -2px 4px rgba(15, 23, 42, 0.25);
+  transition: all 0.15s ease-in-out;
+  cursor: pointer;
+
+  &:hover {
+    background: linear-gradient(145deg, #dc2626, #b91c1c);
+  }
+
+  &:active {
+    transform: translateY(2px);
+    box-shadow: 
+      inset 3px 3px 6px rgba(15, 23, 42, 0.4),
+      inset -2px -2px 5px rgba(255, 255, 255, 0.3);
+  }
+}
+
+@utility clay-btn-success {
+  background: linear-gradient(145deg, #10b981, #059669);
+  color: #ffffff;
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 
+    5px 7px 15px rgba(16, 185, 129, 0.35),
+    -4px -4px 10px rgba(255, 255, 255, 0.3),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.4),
+    inset -2px -2px 4px rgba(15, 23, 42, 0.25);
+  transition: all 0.15s ease-in-out;
+  cursor: pointer;
+
+  &:hover {
+    background: linear-gradient(145deg, #059669, #047857);
+  }
+
+  &:active {
+    transform: translateY(2px);
+    box-shadow: 
+      inset 3px 3px 6px rgba(15, 23, 42, 0.4),
+      inset -2px -2px 5px rgba(255, 255, 255, 0.3);
+  }
+}
+
+@utility clay-input {
+  background-color: #ebf2fb;
+  border-radius: 1rem;
+  border: 1px solid rgba(191, 219, 254, 0.8);
+  box-shadow: 
+    inset 3px 3px 6px rgba(160, 185, 220, 0.45),
+    inset -3px -3px 6px rgba(255, 255, 255, 0.95);
+  transition: all 0.2s ease-in-out;
+
+  &:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 
+      inset 3px 3px 6px rgba(59, 130, 246, 0.2),
+      inset -3px -3px 6px rgba(255, 255, 255, 0.95),
+      0 0 0 3px rgba(147, 197, 253, 0.4);
+  }
+}
+
+@utility clay-badge {
+  border-radius: 9999px;
+  box-shadow: 
+    3px 4px 8px rgba(175, 195, 225, 0.35),
+    -2px -2px 6px #ffffff,
+    inset 1px 1px 2px rgba(255, 255, 255, 0.9),
+    inset -1px -1px 2px rgba(180, 200, 230, 0.2);
+}
+
+@utility clay-badge-emerald {
+  background-color: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+  border-radius: 9999px;
+  box-shadow: 
+    3px 4px 8px rgba(167, 243, 208, 0.4),
+    -2px -2px 6px #ffffff,
+    inset 1px 1px 2px rgba(255, 255, 255, 0.9),
+    inset -1px -1px 2px rgba(16, 185, 129, 0.2);
+}
+
+@utility clay-badge-amber {
+  background-color: #fffbeb;
+  color: #92400e;
+  border: 1px solid #fde68a;
+  border-radius: 9999px;
+  box-shadow: 
+    3px 4px 8px rgba(253, 230, 138, 0.4),
+    -2px -2px 6px #ffffff,
+    inset 1px 1px 2px rgba(255, 255, 255, 0.9),
+    inset -1px -1px 2px rgba(245, 158, 11, 0.2);
+}
+
+@utility clay-badge-rose {
+  background-color: #fff1f2;
+  color: #9f1239;
+  border: 1px solid #fecdd3;
+  border-radius: 9999px;
+  box-shadow: 
+    3px 4px 8px rgba(254, 205, 211, 0.45),
+    -2px -2px 6px #ffffff,
+    inset 1px 1px 2px rgba(255, 255, 255, 0.9),
+    inset -1px -1px 2px rgba(244, 63, 94, 0.2);
+}
+
+@utility clay-badge-blue {
+  background-color: #eff6ff;
+  color: #1e40af;
+  border: 1px solid #bfdbfe;
+  border-radius: 9999px;
+  box-shadow: 
+    3px 4px 8px rgba(191, 219, 254, 0.45),
+    -2px -2px 6px #ffffff,
+    inset 1px 1px 2px rgba(255, 255, 255, 0.9),
+    inset -1px -1px 2px rgba(59, 130, 246, 0.2);
+}
+
+@utility clay-pill-active {
+  background: #ffffff;
+  color: #1d4ed8;
+  border-radius: 1rem;
+  box-shadow: 
+    4px 6px 14px rgba(160, 185, 220, 0.35),
+    -3px -3px 8px #ffffff,
+    inset 2px 2px 4px rgba(255, 255, 255, 0.9),
+    inset -2px -2px 4px rgba(180, 200, 230, 0.2);
+}
+
+@utility clay-pill-inactive {
+  background: transparent;
+  color: #64748b;
+  border-radius: 1rem;
+  transition: all 0.15s ease-in-out;
+
+  &:hover {
+    background: #eef4fc;
+    color: #1e3a8a;
   }
 }

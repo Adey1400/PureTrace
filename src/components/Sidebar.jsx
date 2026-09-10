@@ -12,12 +12,6 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-/**
- * PureTrace Navigation Sidebar Component (White & Blue Dairy Theme)
- * - Fresh, crisp white-and-blue palette inspired by iconic milk packaging
- * - Mobile slide-over drawer with responsive hamburger toggle
- * - Active view highlighted with bold royal-blue border and soft blue background
- */
 export default function Sidebar({ 
   activeTab, 
   setActiveTab, 
@@ -44,7 +38,6 @@ export default function Sidebar({
 
   return (
     <>
-      {/* Mobile Backdrop Overlay */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -65,7 +58,7 @@ export default function Sidebar({
           isOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full lg:translate-x-0'
         }`}
       >
-        {/* Top Section: Branding & Navigation */}
+       
         <div>
           {/* Header & Logo */}
           <div className="p-5 border-b border-blue-100 flex items-center justify-between bg-white">

@@ -43,7 +43,7 @@ export default function LandingPage({ onEnterHub, onVerifyBatchId }) {
             <div>
               <div className="flex items-center gap-1.5">
                 <span className="text-2xl font-black tracking-tight text-blue-700">Pure<span className="text-blue-500">Trace</span></span>
-                <span className="px-2 py-0.5 text-[11px] font-bold bg-red-600 text-white rounded-full uppercase tracking-wider shadow-sm">
+                <span className="px-2 py-0.5 text-[11px] font-bold bg-green-500 text-white rounded-full uppercase tracking-wider shadow-sm">
                   100% PURE
                 </span>
               </div>

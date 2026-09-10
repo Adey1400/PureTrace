@@ -14,13 +14,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-/**
- * PureTrace Top Navigation Header (White & Blue Dairy Theme)
- * - Clean white background with crisp dairy royal-blue accents
- * - Responsive hamburger drawer trigger
- * - Live cold-chain telemetry toggle
- * - Interactive notification center and officer profile
- */
+
 export default function Header({ 
   searchQuery, 
   setSearchQuery, 
@@ -215,8 +209,8 @@ export default function Header({
 
           <div className="hidden xl:block text-left">
             <div className="flex items-center gap-1.5">
-              <span className="text-xs font-bold text-blue-950 tracking-tight">Dr. Sarah Chen</span>
-              <span className="text-[9px] bg-blue-100 text-blue-800 border border-blue-200 px-1 py-0.2 rounded font-bold">QC Head</span>
+              <span className="text-xs font-bold text-blue-950 tracking-tight">Subhankito Roy Choudhury</span>
+              <span className="text-[9px] bg-blue-100 text-blue-800 border border-blue-200 px-1 py-0.2 rounded font-bold">Team Head</span>
             </div>
             <p className="text-[11px] text-slate-500">Chief Quality Officer</p>
           </div>
