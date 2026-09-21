@@ -9,17 +9,45 @@ import {
   CheckCircle2, 
   Award, 
   Heart, 
-  Sparkles
+  Sparkles,
+  Camera,
+  AlertCircle,
+  LogIn,
+  LogOut
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import QRScannerModal from './QRScannerModal';
+import { useAuth } from '../context/useAuth.js';
 
-export default function LandingPage({ onEnterHub, onVerifyBatchId }) {
+export default function LandingPage({ 
+  onEnterHub, 
+  onVerifyBatchId, 
+  onScanQrCode = null, 
+  batches = [],
+  onLoginClick = null
+}) {
+  const { isAuthenticated, logout } = useAuth();
   const [quickSearchId, setQuickSearchId] = useState('');
+  const [searchError, setSearchError] = useState(null);
+  const [isScannerOpen, setIsScannerOpen] = useState(false);
 
   const handleVerify = (e) => {
     e.preventDefault();
-    const query = quickSearchId.trim() || 'PT-8842-A2';
-    onVerifyBatchId(query);
+    setSearchError(null);
+    const query = quickSearchId.trim();
+    if (!query) {
+      setSearchError('Please enter a Batch ID or scan a QR code.');
+      return;
+    }
+    const match = batches.find(b => 
+      b.id.toLowerCase() === query.toLowerCase() ||
+      b.qrCodeId?.toLowerCase() === query.toLowerCase()
+    );
+    if (match) {
+      onVerifyBatchId(query);
+    } else {
+      setSearchError(`No batch found with ID "${query}". Please check the ID or try a sample batch.`);
+    }
   };
 
   const sampleBatches = [
@@ -52,14 +80,34 @@ export default function LandingPage({ onEnterHub, onVerifyBatchId }) {
           </div>
 
           {/* Right Header Navigation & Enterprise Launch */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3 sm:gap-4">
             <button
               onClick={onEnterHub}
-              className="px-5 py-2.5 rounded-xl font-bold text-sm text-white bg-blue-600 hover:bg-blue-700 shadow-md shadow-blue-600/30 flex items-center gap-2 transition-all hover:translate-y-[-1px]"
+              className="px-4 sm:px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm text-white bg-blue-600 hover:bg-blue-700 shadow-md shadow-blue-600/30 flex items-center gap-2 transition-all hover:translate-y-[-1px] cursor-pointer"
             >
               <span>Enterprise Hub</span>
               <ArrowRight className="w-4 h-4" />
             </button>
+
+            {isAuthenticated ? (
+              <button
+                onClick={logout}
+                className="px-3.5 sm:px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm text-slate-700 hover:text-rose-700 bg-slate-100 hover:bg-rose-50 border border-slate-200 hover:border-rose-200 transition-all hover:translate-y-[-1px] cursor-pointer flex items-center gap-1.5"
+                title="Sign out of demo session"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+                <span>Logout</span>
+              </button>
+            ) : (
+              <button
+                onClick={onLoginClick}
+                className="px-4 sm:px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 hover:border-blue-300 transition-all hover:translate-y-[-1px] cursor-pointer flex items-center gap-1.5"
+                title="Sign in to demo account"
+              >
+                <LogIn className="w-3.5 h-3.5" />
+                <span>Login</span>
+              </button>
+            )}
           </div>
         </div>
       </header>
@@ -95,23 +143,42 @@ export default function LandingPage({ onEnterHub, onVerifyBatchId }) {
                 <QrCode className="w-4 h-4 text-blue-600" /> Verify Your Milk Pouch / Bottle
               </span>
 
-              <form onSubmit={handleVerify} className="flex items-center gap-2">
+              <form onSubmit={handleVerify} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
                 <div className="relative flex-1">
                   <input
                     type="text"
                     value={quickSearchId}
-                    onChange={(e) => setQuickSearchId(e.target.value)}
+                    onChange={(e) => {
+                      setQuickSearchId(e.target.value);
+                      if (searchError) setSearchError(null);
+                    }}
                     placeholder="Enter Batch ID (e.g. PT-8842-A2)..."
                     className="w-full bg-blue-50/50 border border-blue-200 focus:border-blue-600 focus:ring-2 focus:ring-blue-100 rounded-xl px-3.5 py-2.5 text-sm font-mono text-slate-800 outline-none"
                   />
                 </div>
-                <button
-                  type="submit"
-                  className="px-5 py-2.5 rounded-xl font-bold text-sm text-white bg-blue-600 hover:bg-blue-700 shadow-md shadow-blue-600/30 flex items-center gap-1.5 transition-all shrink-0"
-                >
-                  <Search className="w-4 h-4" /> Check Purity
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="submit"
+                    className="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl font-bold text-sm text-white bg-blue-600 hover:bg-blue-700 shadow-md shadow-blue-600/30 flex items-center justify-center gap-1.5 transition-all shrink-0"
+                  >
+                    <Search className="w-4 h-4" /> Check Purity
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setIsScannerOpen(true)}
+                    className="px-3.5 py-2.5 rounded-xl font-bold text-sm text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 flex items-center justify-center gap-1.5 transition-all shrink-0"
+                  >
+                    <Camera className="w-4 h-4 text-blue-600" /> Scan QR
+                  </button>
+                </div>
               </form>
+
+              {searchError && (
+                <div className="p-2.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4 shrink-0" />
+                  <span>{searchError}</span>
+                </div>
+              )}
 
               {/* Sample Batch Quick Links */}
               <div className="flex flex-wrap items-center gap-2 pt-1">
@@ -121,6 +188,7 @@ export default function LandingPage({ onEnterHub, onVerifyBatchId }) {
                     key={sample.id}
                     onClick={() => {
                       setQuickSearchId(sample.id);
+                      setSearchError(null);
                       onVerifyBatchId(sample.id);
                     }}
                     className="text-[11px] font-mono font-semibold px-2 py-0.5 rounded-lg bg-blue-100/70 hover:bg-blue-200/80 text-blue-800 transition-colors"
@@ -130,6 +198,19 @@ export default function LandingPage({ onEnterHub, onVerifyBatchId }) {
                 ))}
               </div>
             </div>
+
+            {/* QR Scanner Modal */}
+            <QRScannerModal
+              isOpen={isScannerOpen}
+              onClose={() => setIsScannerOpen(false)}
+              onScanSuccess={(urlOrPayload) => {
+                setIsScannerOpen(false);
+                if (onScanQrCode) {
+                  onScanQrCode(urlOrPayload);
+                }
+              }}
+              batches={batches}
+            />
 
             {/* Dairy Standards Badges */}
             <div className="flex flex-wrap items-center gap-4 pt-2 text-xs text-blue-100 font-medium">

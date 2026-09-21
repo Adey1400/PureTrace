@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { 
   X, 
   ShieldCheck, 
@@ -13,10 +13,23 @@ import {
   Check 
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import BatchQRCode from './BatchQRCode';
+import ChainOfCustody from './ChainOfCustody';
+import { getVerificationUrl } from '../utils/qrPayload';
 
-export default function BatchInspectModal({ batch, onClose, onUpdateStatus }) {
+export default function BatchInspectModal({ 
+  batch, 
+  onClose, 
+  onUpdateStatus, 
+  onOpenVerification = null 
+}) {
   const [copiedHash, setCopiedHash] = useState(false);
   const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'adulterants' | 'blockchain'
+
+  const verificationUrl = useMemo(() => {
+    if (!batch) return '';
+    return getVerificationUrl(batch);
+  }, [batch]);
 
   if (!batch) return null;
 
@@ -240,32 +253,29 @@ export default function BatchInspectModal({ batch, onClose, onUpdateStatus }) {
           )}
 
           {activeTab === 'blockchain' && (
-            <div className="space-y-5">
-              <div className="p-5 rounded-2xl bg-blue-50/40 border border-blue-100 flex flex-col sm:flex-row items-center gap-6">
-                <div className="w-32 h-32 rounded-2xl bg-white p-2.5 shrink-0 flex items-center justify-center border border-blue-200 shadow-sm">
-                  <div className="w-full h-full border-4 border-slate-900 grid grid-cols-5 gap-1 p-1 bg-white">
-                    <div className="bg-slate-950 col-span-2 row-span-2"></div>
-                    <div className="bg-slate-950"></div>
-                    <div className="bg-slate-950 col-span-2 row-span-2"></div>
-                    <div className="bg-slate-950"></div>
-                    <div className="bg-slate-950"></div>
-                    <div className="bg-slate-950 col-span-2"></div>
-                    <div className="bg-slate-950"></div>
-                    <div className="bg-slate-950 col-span-2"></div>
-                  </div>
-                </div>
+            <div className="space-y-6">
+              {/* QR Verification Seal Card */}
+              <div className="p-5 rounded-2xl bg-blue-50/40 border border-blue-200 flex flex-col sm:flex-row items-center gap-6">
+                <BatchQRCode
+                  value={verificationUrl}
+                  size={190}
+                  batchId={batch.id}
+                  onOpenVerify={onOpenVerification ? () => onOpenVerification(verificationUrl) : null}
+                />
 
-                <div className="space-y-2 flex-1">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-black text-blue-950">Immutable Ledger Serialization</span>
-                    <span className="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded border border-emerald-200">Verified Ledger Hash</span>
+                <div className="space-y-2 flex-1 w-full">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-sm font-black text-blue-950">Cryptographic Traceability Ledger</span>
+                    <span className="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded border border-emerald-200">
+                      Integrity Verified Seal
+                    </span>
                   </div>
-                  <p className="text-xs text-slate-600">
-                    This batch has been cryptographically sealed. Any tampering with cold-chain or volume triggers instant state rollback.
+                  <p className="text-xs text-slate-600 leading-relaxed">
+                    This milk batch is cryptographically serialized with an immutable chain of custody. Scan the QR code with any mobile camera to independently verify batch integrity.
                   </p>
                   
                   <div className="pt-2">
-                    <span className="text-[10px] text-slate-500 uppercase font-bold">Ledger Hash</span>
+                    <span className="text-[10px] text-slate-500 uppercase font-bold">Ledger Head Hash (SHA-256)</span>
                     <div className="mt-1 flex items-center gap-2 p-2.5 rounded-xl bg-white border border-blue-200 text-xs font-mono text-blue-900 break-all">
                       <span className="truncate">{batch.blockchainHash}</span>
                       <button
@@ -277,23 +287,22 @@ export default function BatchInspectModal({ batch, onClose, onUpdateStatus }) {
                       </button>
                     </div>
                   </div>
+
+                  <div className="pt-2 grid grid-cols-2 gap-2 text-xs">
+                    <div>
+                      <span className="text-[10px] text-slate-400 uppercase font-bold block">QR Identifier</span>
+                      <span className="font-mono text-blue-900 font-bold">{batch.qrCodeId}</span>
+                    </div>
+                    <div>
+                      <span className="text-[10px] text-slate-400 uppercase font-bold block">Signed By</span>
+                      <span className="text-slate-800 font-bold">{batch.operator}</span>
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              <div className="p-4 rounded-2xl bg-white border border-slate-200 space-y-2 text-xs">
-                <div className="flex justify-between">
-                  <span className="text-slate-500">QR Code Reference:</span>
-                  <span className="font-mono text-blue-900 font-bold">{batch.qrCodeId}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-500">Signed By:</span>
-                  <span className="text-slate-800 font-bold">{batch.operator}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-500">Timestamp:</span>
-                  <span className="text-slate-800 font-medium">{batch.timeFull}</span>
-                </div>
-              </div>
+              {/* Interactive Chain of Custody & Verification Module */}
+              <ChainOfCustody batch={batch} />
             </div>
           )}
         </div>
