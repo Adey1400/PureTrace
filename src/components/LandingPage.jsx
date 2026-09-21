@@ -11,17 +11,22 @@ import {
   Heart, 
   Sparkles,
   Camera,
-  AlertCircle
+  AlertCircle,
+  LogIn,
+  LogOut
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import QRScannerModal from './QRScannerModal';
+import { useAuth } from '../context/useAuth.js';
 
 export default function LandingPage({ 
   onEnterHub, 
   onVerifyBatchId, 
   onScanQrCode = null, 
-  batches = [] 
+  batches = [],
+  onLoginClick = null
 }) {
+  const { isAuthenticated, logout } = useAuth();
   const [quickSearchId, setQuickSearchId] = useState('');
   const [searchError, setSearchError] = useState(null);
   const [isScannerOpen, setIsScannerOpen] = useState(false);
@@ -75,14 +80,34 @@ export default function LandingPage({
           </div>
 
           {/* Right Header Navigation & Enterprise Launch */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3 sm:gap-4">
             <button
               onClick={onEnterHub}
-              className="px-5 py-2.5 rounded-xl font-bold text-sm text-white bg-blue-600 hover:bg-blue-700 shadow-md shadow-blue-600/30 flex items-center gap-2 transition-all hover:translate-y-[-1px]"
+              className="px-4 sm:px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm text-white bg-blue-600 hover:bg-blue-700 shadow-md shadow-blue-600/30 flex items-center gap-2 transition-all hover:translate-y-[-1px] cursor-pointer"
             >
               <span>Enterprise Hub</span>
               <ArrowRight className="w-4 h-4" />
             </button>
+
+            {isAuthenticated ? (
+              <button
+                onClick={logout}
+                className="px-3.5 sm:px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm text-slate-700 hover:text-rose-700 bg-slate-100 hover:bg-rose-50 border border-slate-200 hover:border-rose-200 transition-all hover:translate-y-[-1px] cursor-pointer flex items-center gap-1.5"
+                title="Sign out of demo session"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+                <span>Logout</span>
+              </button>
+            ) : (
+              <button
+                onClick={onLoginClick}
+                className="px-4 sm:px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 hover:border-blue-300 transition-all hover:translate-y-[-1px] cursor-pointer flex items-center gap-1.5"
+                title="Sign in to demo account"
+              >
+                <LogIn className="w-3.5 h-3.5" />
+                <span>Login</span>
+              </button>
+            )}
           </div>
         </div>
       </header>

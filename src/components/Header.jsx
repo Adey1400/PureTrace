@@ -10,7 +10,8 @@ import {
   QrCode, 
   X,
   Menu,
-  Home
+  Home,
+  LogOut
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -23,7 +24,8 @@ export default function Header({
   isLiveSimulating,
   setIsLiveSimulating,
   onToggleSidebar,
-  onGoToLanding
+  onGoToLanding,
+  onLogout
 }) {
   const [showNotifications, setShowNotifications] = useState(false);
   const notifRef = useRef(null);
@@ -214,6 +216,17 @@ export default function Header({
             </div>
             <p className="text-[11px] text-slate-500">Chief Quality Officer</p>
           </div>
+
+          {onLogout && (
+            <button
+              onClick={onLogout}
+              className="p-2 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+              title="Sign Out"
+              aria-label="Sign Out"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
+          )}
         </div>
       </div>
     </header>

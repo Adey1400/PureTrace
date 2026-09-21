@@ -22,3 +22,12 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+*.sw?
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Scratch directory
+scratch/

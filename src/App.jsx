@@ -11,16 +11,19 @@ import BatchesView from './components/views/BatchesView';
 import MilkCycleMapView from './components/views/MilkCycleMapView';
 import LabResultsView from './components/views/LabResultsView';
 import SettingsView from './components/views/SettingsView';
+import LoginPage from './components/auth/LoginPage';
+import { AuthProvider } from './context/AuthContext';
+import { useAuth } from './context/useAuth';
 
-import { 
-  INITIAL_BATCHES, 
-  LIVE_TELEMETRY_STREAM, 
-  SYSTEM_NOTIFICATIONS 
+import {
+  INITIAL_BATCHES,
+  LIVE_TELEMETRY_STREAM,
+  SYSTEM_NOTIFICATIONS
 } from './data/mockData';
 
-import { 
-  buildDefaultBatchLedger, 
-  appendStatusUpdateBlock 
+import {
+  buildDefaultBatchLedger,
+  appendStatusUpdateBlock
 } from './utils/blockchain';
 
 const STORAGE_KEY = 'puretrace_batches_ledger_v1';
@@ -32,15 +35,40 @@ const STORAGE_KEY = 'puretrace_batches_ledger_v1';
  * - Dedicated consumer verification route (/verify) with standalone payload validation
  * - Seamless transitions between Consumer Portal and Enterprise Hub
  */
-export default function App() {
+function AppContent() {
+  const { isAuthenticated, logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
 
   // Screen Mode: 'landing' (Consumer portal) or 'app' (Enterprise hub)
   const [appScreen, setAppScreen] = useState('landing');
-  const currentScreen = location.pathname === '/verify' ? 'verify' : appScreen;
+  const currentScreen = location.pathname === '/verify'
+    ? 'verify'
+    : (location.pathname === '/login' ? 'login' : appScreen);
   const [activeTab, setActiveTab] = useState('dashboard');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  // Protect enterprise hub: unauthenticated users redirect to /login
+  useEffect(() => {
+    if (appScreen === 'app' && !isAuthenticated && location.pathname !== '/login') {
+      navigate('/login');
+    }
+  }, [appScreen, isAuthenticated, location.pathname, navigate]);
+
+  // Hitting Enterprise Hub: redirect to /login if not authenticated, else enter app
+  const handleEnterHub = () => {
+    if (isAuthenticated) {
+      setAppScreen('app');
+    } else {
+      navigate('/login');
+    }
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+    setAppScreen('landing');
+  };
 
   // Application Data State
   const [batches, setBatches] = useState(INITIAL_BATCHES);
@@ -140,8 +168,8 @@ export default function App() {
     );
 
     const updatedLedger = [...currentLedger, statusBlock];
-    const newRisk = newStatus === 'Quarantined' 
-      ? 'High Risk' 
+    const newRisk = newStatus === 'Quarantined'
+      ? 'High Risk'
       : (batch.risk === 'High Risk' ? 'Normal' : batch.risk);
 
     const updatedBatch = {
@@ -213,8 +241,8 @@ export default function App() {
 
   // Quick verification from consumer landing page (manual lookup)
   const handleVerifyFromLanding = (batchId) => {
-    const match = batches.find(b => 
-      b.id.toLowerCase() === batchId.toLowerCase() || 
+    const match = batches.find(b =>
+      b.id.toLowerCase() === batchId.toLowerCase() ||
       b.qrCodeId.toLowerCase() === batchId.toLowerCase()
     );
     if (match) {
@@ -223,13 +251,13 @@ export default function App() {
   };
 
   // Global search filtering
-  const filteredBatchesBySearch = searchQuery.trim() 
-    ? batches.filter(b => 
-        b.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        b.farmOrigin.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        b.qrCodeId.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        b.breedType.toLowerCase().includes(searchQuery.toLowerCase())
-      )
+  const filteredBatchesBySearch = searchQuery.trim()
+    ? batches.filter(b =>
+      b.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      b.farmOrigin.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      b.qrCodeId.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      b.breedType.toLowerCase().includes(searchQuery.toLowerCase())
+    )
     : [];
 
   // Render dedicated verification page if on /verify route or 'verify' screen mode
@@ -250,14 +278,31 @@ export default function App() {
     );
   }
 
+  // Render dedicated demo login page if on /login route
+  if (currentScreen === 'login') {
+    return (
+      <LoginPage
+        onBackToHome={() => {
+          navigate('/');
+          setAppScreen('landing');
+        }}
+        onSuccess={() => {
+          navigate('/');
+          setAppScreen('app');
+        }}
+      />
+    );
+  }
+
   // Render Landing Page if currently on 'landing' screen
   if (currentScreen === 'landing') {
     return (
       <LandingPage
         batches={batches}
-        onEnterHub={() => setAppScreen('app')}
+        onEnterHub={handleEnterHub}
         onVerifyBatchId={handleVerifyFromLanding}
         onScanQrCode={handleScanQrCode}
+        onLoginClick={() => navigate('/login')}
       />
     );
   }
@@ -293,18 +338,19 @@ export default function App() {
             navigate('/');
             setAppScreen('landing');
           }}
+          onLogout={handleLogout}
         />
 
         {/* Global Search Results Flyout */}
         {searchQuery.trim() && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             className="mx-4 sm:mx-8 mt-4 p-4 rounded-3xl bg-white border border-blue-200 shadow-xl z-20 space-y-2"
           >
             <div className="flex items-center justify-between text-xs text-slate-500 pb-2 border-b border-slate-100">
               <span>Search matches for: <strong className="text-blue-700 font-bold">"{searchQuery}"</strong> ({filteredBatchesBySearch.length} found)</span>
-              <button 
+              <button
                 onClick={() => setSearchQuery('')}
                 className="text-slate-400 hover:text-slate-700 font-bold"
               >
@@ -395,5 +441,13 @@ export default function App() {
         )}
       </AnimatePresence>
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }
