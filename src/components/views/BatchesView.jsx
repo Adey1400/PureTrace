@@ -10,6 +10,7 @@ import {
   Sparkles
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { buildDefaultBatchLedger } from '../../utils/blockchain';
 
 export default function BatchesView({ batches, onInspectBatch, onAddNewBatch }) {
   const [filterRisk, setFilterRisk] = useState('ALL'); // 'ALL' | 'Normal' | 'Suspicious' | 'High Risk'
@@ -58,7 +59,7 @@ export default function BatchesView({ batches, onInspectBatch, onAddNewBatch }) 
     );
   };
 
-  const handleCreateBatch = (e) => {
+  const handleCreateBatch = async (e) => {
     e.preventDefault();
     let risk = 'Normal';
     let riskScore = 98.5;
@@ -78,14 +79,19 @@ export default function BatchesView({ batches, onInspectBatch, onAddNewBatch }) 
       status = 'Quarantined';
     }
 
-    const newBatch = {
-      id: `PT-${Math.floor(1000 + Math.random() * 9000)}-${newBatchForm.breedType.includes('A2') ? 'A2' : 'MX'}`,
+    const batchId = `PT-${Math.floor(1000 + Math.random() * 9000)}-${newBatchForm.breedType.includes('A2') ? 'A2' : 'MX'}`;
+    const qrCodeId = `PT-QR-${Math.floor(1000 + Math.random() * 9000)}`;
+    const timeFull = new Date().toISOString().replace('T', ' ').slice(0, 16);
+
+    const baseBatch = {
+      id: batchId,
       farmOrigin: newBatchForm.farmOrigin,
       chillingCenter: newBatchForm.chillingCenter,
       breedType: newBatchForm.breedType,
       volumeLiters: Number(newBatchForm.volumeLiters),
       timestamp: 'Just now',
-      timeFull: new Date().toISOString().replace('T', ' ').slice(0, 16),
+      timeFull,
+      createdAtTimestamp: Date.now(),
       fat: Number(newBatchForm.fat),
       snf: Number(newBatchForm.snf),
       protein: 3.4,
@@ -100,8 +106,7 @@ export default function BatchesView({ batches, onInspectBatch, onAddNewBatch }) 
       risk,
       riskScore,
       status,
-      blockchainHash: '0x' + Array.from({length: 64}, () => Math.floor(Math.random()*16).toString(16)).join(''),
-      qrCodeId: `PT-QR-${Math.floor(1000 + Math.random() * 9000)}`,
+      qrCodeId,
       coldChainCompliance: newBatchForm.tempC > 5.0 ? 78.4 : 99.8,
       operator: 'Dr. Sarah Chen (Intake Chemist)',
       tankerId: 'TK-505-Auto',
@@ -117,7 +122,15 @@ export default function BatchesView({ batches, onInspectBatch, onAddNewBatch }) 
       ]
     };
 
-    onAddNewBatch(newBatch);
+    // Asynchronously generate cryptographic ledger (Blocks 0 through 6)
+    const ledger = await buildDefaultBatchLedger(baseBatch);
+    const finalBatch = {
+      ...baseBatch,
+      ledger,
+      blockchainHash: ledger[ledger.length - 1].hash
+    };
+
+    onAddNewBatch(finalBatch);
     setShowAddModal(false);
   };
 
