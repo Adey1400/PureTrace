@@ -1,13 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { 
-  Search, 
-  Bell, 
-  ShieldAlert, 
-  CheckCircle2, 
-  AlertTriangle, 
-  Info, 
-  Wifi, 
-  QrCode, 
+import {
+  Search,
+  Bell,
+  ShieldAlert,
+  CheckCircle2,
+  AlertTriangle,
+  Info,
+  Wifi,
+  QrCode,
   X,
   Menu,
   Home,
@@ -16,11 +16,11 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 
 
-export default function Header({ 
-  searchQuery, 
-  setSearchQuery, 
-  notifications, 
-  markAllNotificationsRead, 
+export default function Header({
+  searchQuery,
+  setSearchQuery,
+  notifications,
+  markAllNotificationsRead,
   isLiveSimulating,
   setIsLiveSimulating,
   onToggleSidebar,
@@ -68,7 +68,7 @@ export default function Header({
             className="w-full bg-blue-50/50 border border-blue-200 focus:border-blue-600 focus:ring-2 focus:ring-blue-100 rounded-xl pl-10 pr-20 py-2 text-xs sm:text-sm text-slate-800 placeholder-slate-400 transition-all outline-none"
           />
           {searchQuery && (
-            <button 
+            <button
               onClick={() => setSearchQuery('')}
               className="absolute inset-y-0 right-10 pr-2 flex items-center text-slate-400 hover:text-slate-700"
             >
@@ -97,11 +97,10 @@ export default function Header({
         {/* Live Simulation Stream Toggle */}
         <button
           onClick={() => setIsLiveSimulating(!isLiveSimulating)}
-          className={`flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold border transition-all ${
-            isLiveSimulating
+          className={`flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-bold border transition-all ${isLiveSimulating
               ? 'bg-blue-600 border-blue-600 text-white shadow-xs shadow-blue-500/30'
               : 'bg-white border-blue-200 text-slate-600 hover:text-slate-900'
-          }`}
+            }`}
           title="Toggle real-time sensor fluctuation"
         >
           <span className={`w-2 h-2 rounded-full shrink-0 ${isLiveSimulating ? 'bg-white animate-pulse' : 'bg-slate-400'}`}></span>
@@ -169,11 +168,10 @@ export default function Header({
                     return (
                       <div
                         key={notif.id}
-                        className={`p-2.5 rounded-xl border transition-all ${
-                          notif.unread
+                        className={`p-2.5 rounded-xl border transition-all ${notif.unread
                             ? 'bg-blue-50/40 border-blue-200'
                             : 'bg-white border-slate-100 opacity-80 hover:opacity-100'
-                        }`}
+                          }`}
                       >
                         <div className="flex items-start gap-2.5">
                           <div className={`p-1.5 rounded-lg border shrink-0 mt-0.5 ${iconColor}`}>
@@ -211,8 +209,8 @@ export default function Header({
 
           <div className="hidden xl:block text-left">
             <div className="flex items-center gap-1.5">
-              <span className="text-xs font-bold text-blue-950 tracking-tight">Subhankito Roy Choudhury</span>
-              <span className="text-[9px] bg-blue-100 text-blue-800 border border-blue-200 px-1 py-0.2 rounded font-bold">Team Head</span>
+              <span className="text-xs font-bold text-blue-950 tracking-tight">admin</span>
+
             </div>
             <p className="text-[11px] text-slate-500">Chief Quality Officer</p>
           </div>
